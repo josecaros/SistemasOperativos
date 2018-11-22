@@ -28,7 +28,7 @@ void encolar(Cola *col, int data){
 
 int desencolar(Cola *col){
 	
-	int data = 0;
+	int data ;
 	int i = col -> size;
 	int *array = col -> array;
 	
@@ -37,9 +37,10 @@ int desencolar(Cola *col){
 		col -> inic = (col->inic+1) % N;
 		col -> size--;
 		
+		return data;	
 	} 
 	
-	return data;
+	return -1;
 
 
 }
