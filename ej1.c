@@ -18,7 +18,6 @@ struct parametro {
 
 void *funcionUnica(void *arg) {
 	
-
 	struct parametro *param = (struct parametro*)arg;
 	pthread_mutex_t *m1 = param -> lock;
 	pthread_mutex_t *m2 = param -> unlock;

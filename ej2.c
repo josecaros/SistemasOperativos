@@ -1,32 +1,36 @@
+// Ejercicio2
+// -Ccahui Huaman Kristian 	
+
 #include<stdio.h>
 #include<pthread.h>
 #include<unistd.h>
 #include<stdlib.h>
 
+
 struct parametros {
-	int idHilo;
-	int tiempo;
+	int *array; 
+	int tiempo; 
+	int length;
 };
 
-#define TAM 20
-int p = 0;
-int array[TAM];
-pthread_mutex_t s1 = PTHREAD_MUTEX_INITIALIZER;
 
+int p = 0; //Posicion a escribir en el array
+pthread_mutex_t s1 = PTHREAD_MUTEX_INITIALIZER;
 
 
 void *fhilo(void *args){
 	
 	struct parametros *param= (struct parametros*)args;
 	int i = param -> tiempo;	
+	int n = param -> length;
+	int *array  = param -> array;
 
 	while(1){
-			
-		fflush(stdout);
-		sleep(i);
+		
 		pthread_mutex_lock(&s1);
-
-		 if(p < TAM){
+	
+		//Verifico que la posicion a escribir es VALIDA
+		 if(p < n){
 			array[p] = i;
 			printf("Escribi un: %d en la posicion: %d\n", i,p );
 			fflush(stdout);
@@ -37,31 +41,37 @@ void *fhilo(void *args){
 			break;
 			}
 		pthread_mutex_unlock(&s1);
+		sleep(i);
 	}
 	
 }
-void print(){
 
-	for(int i = 0; i<TAM; i++)
-		printf("%d ",array[i]);
-	printf("\n");
-}
 
 int main(){
 
-	pthread_t hilos[4];
+	int n;
+	scanf("%d",&n);
+	int array [n];
+
+
+	//Incializando parametros para los hilos , con su tiempo
 	struct parametros param[4];
+	for (int i = 0;i < 4; i++){
+		param[i].array = array;
+		param[i].tiempo = i+1;
+		param[i].length = n;
+	}
+	
+	//Inicializamos los HILOS y sus Parametros para cada HILO
+	pthread_t hilos[4];
 	for(int i = 0; i < 4; i++){
-		param[i].idHilo = i;
-		param[i].tiempo = rand()%5+1;
 		pthread_create(&hilos[i], NULL, fhilo,(void*)&param[i]);
 	}
-	for(int i = 0; i < 4; i++)
-		pthread_join(hilos[i], NULL);
 	
-	printf("\n");	
-	print();
-		
+	//Espera a que finalicen los hilos creados
+	for(int i = 0; i < 4; i++){
+		pthread_join(hilos[i], NULL);
+	}
 	
 
 }
