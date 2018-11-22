@@ -7,77 +7,69 @@ pthread_mutex_t s1 = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t s2 = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t s3 = PTHREAD_MUTEX_INITIALIZER;
 
-int count = 1;
+int count = 20;
 
-void *funcion01(void *arg) {
-	int i;
+struct parametro {
 
-	while(count>0) {
-		pthread_mutex_lock(&s3);
+	char letra;
+	pthread_mutex_t *lock;
+	pthread_mutex_t *unlock;
+};
+
+void *funcionUnica(void *arg) {
+	
+
+	struct parametro *param = (struct parametro*)arg;
+	pthread_mutex_t *m1 = param -> lock;
+	pthread_mutex_t *m2 = param -> unlock;
+	char letra = param -> letra;
+
+	int i = 0;
+
+	while(count > 0) {
+		pthread_mutex_lock(m1);
 		 for (i=0; i<count; i++) {
-			printf("+");
+			printf("%c",letra);
 			fflush(stdout);
-			sleep(1);
+		//	sleep(1);
 		 }
 		count--;
 			printf("\n");
 			fflush(stdout);
-		pthread_mutex_unlock(&s1);
+		pthread_mutex_unlock(m2);
 	}
 
 	 	return NULL;
-}
-void *funcion02(void *arg) {
-	int i;
-	
-	while(count>0) {
-		pthread_mutex_lock(&s2);
-		 for (i=0; i<count; i++) {
-			printf("o");
-			fflush(stdout);
-			sleep(1);
-		 }
-			printf("\n");
-			fflush(stdout);
-		count--;
-		pthread_mutex_unlock(&s3);
-
-	}
-	return NULL;
 }
 int main() {
 	
 	pthread_mutex_lock(&s2);
 	pthread_mutex_lock(&s3);
 
-
-	pthread_t mihilo01, mihilo02;
-	int i;
-	if (pthread_create(&mihilo01,NULL,funcion01,NULL)) {
-		printf("Error creando el hilo.");
-		abort();
-	}
-	if (pthread_create(&mihilo02,NULL,funcion02,NULL)) {
-		printf("Error creando el hilo.");
-		abort();
-	}
-	while(count>0){
-		pthread_mutex_lock(&s1);
-		 for (i=0; i<count; i++) {
-			printf("x");
-			fflush(stdout);
-			sleep(1);
-		 }
-			printf("\n");
-			fflush(stdout);
-		count--;
-		pthread_mutex_unlock(&s2);
+	struct parametro params[3];
+	params[0].letra = 'x';
+	params[0].lock = &s1;
+	params[0].unlock = &s2;
 		
-	}	
+	params[1].letra = 'o';
+	params[1].lock = &s2;
+	params[1].unlock = &s3;
 
+	params[2].letra = '+';
+	params[2].lock = &s3;
+	params[2].unlock = &s1;
 
-	pthread_join(mihilo01,NULL);
-	pthread_join(mihilo02,NULL);
+	pthread_t hilos[2];
+
 	
-	printf("\nFIN\n");
+	for(int i=0; i < 2; i++){
+		pthread_create(&hilos[i],NULL,&funcionUnica, (void*)&params[i+1]);
+	}	
+	
+	funcionUnica((void*)&params[0]);
+	
+	for(int i=0;i<2;i++)
+		pthread_join(hilos[i],NULL);
+
+	printf("FIN\n");
 }	
