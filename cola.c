@@ -19,13 +19,7 @@ void encolar(Cola *col, int data){
 	int i = col -> size;
 	int *array = col -> array;
 
-	if ( i == 0) {
-		col -> inic = 0;
-		col -> fin = 0;
-		array[ col->fin ] = data;
-		col -> size++;
-	}
-	else if (i < N){
+	if (i < N){
 		col -> fin = (col-> fin+1)%N; 
 		array[col->fin] = data;
 		col -> size++;
@@ -34,24 +28,18 @@ void encolar(Cola *col, int data){
 
 int desencolar(Cola *col){
 	
-	int data;
+	int data = 0;
 	int i = col -> size;
 	int *array = col -> array;
 	
-	if(i>0){
-		data = col -> fin;
-		if( i == 1){
-			col -> inic = 0;
-			col -> fin = 0;
-		}		
-		else {
-			col -> fin = (col->fin-1+N) % N;
-		}
-	
-			
+	if( i>0 ){
+		data = array[col -> inic];
+		col -> inic = (col->inic+1) % N;
 		col -> size--;
 		
 	} 
+	
+	return data;
 
 
 }
@@ -72,8 +60,24 @@ int main(){
 	
 	Cola col;
 	col.size = 0;
-	col.inic = -1;
+	col.inic = 0;
 	col.fin = -1;
+	
+	encolar(&col,1);	
+	encolar(&col,2);	
+	encolar(&col,3);	
+	encolar(&col,4);	
+	encolar(&col,5);	
+	
+	print(col);
+	
+	printf("a %d \n",desencolar(&col));	
+	printf("a %d \n",desencolar(&col));	
+	printf("a %d \n",desencolar(&col));	
+	printf("a %d \n",desencolar(&col));	
+	printf("a %d \n",desencolar(&col));	
+	printf("a %d \n",desencolar(&col));	
+	printf("a %d \n",desencolar(&col));	
 	
 }
 
