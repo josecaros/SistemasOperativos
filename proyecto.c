@@ -12,6 +12,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include "cola.h"
 
 union semun{
     int val;
@@ -58,14 +59,44 @@ void DesbloquearSemaforo(int id, int i) {
     sb.sem_flg = SEM_UNDO;
     semop(id, &sb, 1);
 }
-
+enum {
+    sem1,
+    sem2,
+    sem3
+};
 
 
 
 int main (){
-    
-	Cola col;
-	
+    int numUser;
+    int numBanios;
+    puts("Ingrese la cantidad de Usuarios");
+    scanf("%i",&numUser);
+    puts("Ingrese la cantidad de baños");
+    scanf("%i",&numBanios);
+    int idShMem;
+    int idSem;
+    char* buf;
+    short vals[2];
+    int miSem;
+    int tuSem;
+    Cola col;
+    col.size=0;
+    col.inic=0;
+    col.fin=-1;
+
+
+    while(numUser--){
+        int carac=rand()%2;
+        char sexo;
+        if(carac==0)
+            sexo='M';
+        else
+            sexo='H';
+        Persona data={sexo,rand () % (10-5+1) + 5};
+        encolar(&col,data);
+    }
+    print(col);
 
 
 }
