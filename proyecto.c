@@ -82,6 +82,8 @@ int main (){
     col.inic=0;
     col.fin=-1;
 
+    idShMem= ReservarMemoriaComp(BUFSIZ);
+
 
     while(numUser--){
         int carac=rand()%2;
