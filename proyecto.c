@@ -13,6 +13,7 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include "cola.h"
+#include <sys/wait.h>
 
 union semun{
     int val;
@@ -81,24 +82,26 @@ void serviciosHigenicos(Cola col, int i){
 int main (){
     int numUser;
     int numBanios;
+    int numBanios1=numBanios;
     puts("Ingrese la cantidad de Usuarios");
     scanf("%i",&numUser);
     puts("Ingrese la cantidad de baños");
     scanf("%i",&numBanios);
     int idShMem;
+    Cola* buf;
+
+    pid_t pid;
+
     int idSem;
-    char* buf;
-    short vals[2];
-    int miSem;
-    int tuSem;
-    Cola col;
-    col.size=0;
-    col.inic=0;
-    col.fin=-1;
+    short vals[3];
 
-    idShMem= ReservarMemoriaComp(BUFSIZ);
+    idSem=CrearSemaforos(3,vals);
 
-
+    idShMem= ReservarMemoriaComp(sizeof(struct cola));
+    buf=(Cola*) MapearMemoriaComp(idShMem);
+    buf->inic=0;
+    buf->size=0;
+    buf->fin=-1;
     while(numUser--){
         int carac=rand()%2;
         char sexo;
@@ -107,9 +110,17 @@ int main (){
         else
             sexo='H';
         Persona data={sexo,rand () % (10-5+1) + 5};
-        encolar(&col,data);
+        encolar(buf,data);
     }
-    print(col);
+    while(numBanios--){
+        pid=fork();
+        if(pid==0){
+            //
+            break;
+        }
+    }
 
-
+    while(numBanios1--)
+        wait();
+    BorrarSemaforos(idSem);
 }
