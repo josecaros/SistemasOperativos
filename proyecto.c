@@ -12,6 +12,7 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include "cola.h"
+
 union semun{
     int val;
     struct semid_ds *buf;
@@ -74,4 +75,7 @@ int main (){
     while(numUser){
 
     }
+
+
+
 }

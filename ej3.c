@@ -1,11 +1,19 @@
+// Ejercicio3
+// Ccahui Huaman Kristian
+
 #include<stdio.h>
 #include<pthread.h>
 #include<unistd.h>
 #include<stdlib.h>
 
-#define N 100
 
-//COLA 
+//Para no producir  INFINITAMENTE
+#define K 15
+
+//LIMITE DE TAM DE LA COLA
+#define N 10
+
+//STRUCT COLA ARRAY
 struct cola {
 	int size;
 	int inic;
@@ -65,17 +73,18 @@ void escribe(int n) {
 
 //Funcion Hilo PRODUCTOR
 void *productor() {
-	while(1){
-		sleep(1);
+	int i = 0;
+	//Definimos un limite de produccion para no producir INFINITAMENTE
+	while(i < K){
 		int n = rand();
 		escribe(n);
+		i++;
 	}
 }
 
 //Funcion Hilo CONSUMIDOR
 void *consumidor() {
 	while(1){
-		sleep(1);
 		lee();
 	}
 }
@@ -97,7 +106,7 @@ int main() {
 
 
 
-//IMPLEMETACION DE LAS METODOS DE COLA
+//IMPLEMETACION DE LAS METODOS DE COLA ARRAY
 
 int estaVacio(Cola *col){
 	return col -> size == 0;
