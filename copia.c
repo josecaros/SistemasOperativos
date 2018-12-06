@@ -12,7 +12,6 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
-#include "cola.h"
 
 union semun{
     int val;
@@ -59,57 +58,67 @@ void DesbloquearSemaforo(int id, int i) {
     sb.sem_flg = SEM_UNDO;
     semop(id, &sb, 1);
 }
-enum {
-    sem1,
-    sem2,
-    sem3
-};
+
+void entraMujer(){
+	printf("Mujer Entrando\n");	
+}
+void saleMujer(){
+	printf("Sale Mujer \n");
+}
+void entraHombre() {
+	printf("Entra Hombre");
+}
+void saleHombre(){
+	printf("Sale Hombre");
+}
 
 void serviciosHigenicos(Cola col, int i){
 	
 	
 	while(!estaVacio(&col)){
 		Persona a = desencolar(&col);
-		printPersona(a);					
+		printProceso(a,i);					
 	}
 	printf("Proceso %d\n",i);
 						
 	
 }
 
+int main () {
+	//INICIANDO LA COLA	
+	Cola col;
+	col.inic = 0;
+	col.fin = -1;
+	col.size = 0;
 
-int main (){
-    int numUser;
-    int numBanios;
-    puts("Ingrese la cantidad de Usuarios");
-    scanf("%i",&numUser);
-    puts("Ingrese la cantidad de baños");
-    scanf("%i",&numBanios);
-    int idShMem;
-    int idSem;
-    char* buf;
-    short vals[2];
-    int miSem;
-    int tuSem;
-    Cola col;
-    col.size=0;
-    col.inic=0;
-    col.fin=-1;
+	key_t clave = ftok("/bin/ls",33);
+	int idMemoria = shmget(clave,100,IPC_CREAT | 0777);	
+	Cola* colCompartida = (Cola*)shmat(idMemoria,0,0);
+//	colCompartida = &col;
+	colCompartida -> inic = 0;
+	colCompartida -> fin = -1;
+	colCompartida -> size = 0;
 
-    idShMem= ReservarMemoriaComp(BUFSIZ);
+	Persona per[10];
+	for(int i = 0;i<10;i++){
+		per[i].genero = 'h';
+		per[i].tiempo = i+1;
+		encolar(colCompartida, per[i]);
+	}
 
+	int L = 3;
+	for(int i = 0; i < L; i++){
+	
+		pid_t pid = fork();
+		//HIJO
+		if(pid == 0){
+			serviciosHigenicos(*colCompartida,i+1);
+		}	
+	}
 
-    while(numUser--){
-        int carac=rand()%2;
-        char sexo;
-        if(carac==0)
-            sexo='M';
-        else
-            sexo='H';
-        Persona data={sexo,rand () % (10-5+1) + 5};
-        encolar(&col,data);
-    }
-    print(col);
+	sleep(4);
+	print(*colCompartida);
+
 
 
 }

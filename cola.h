@@ -6,8 +6,8 @@
 #define LABORATORIO9Y10_COLA_H
 //tu codigo aqui
 
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 #define N 100
 
 //PERSONA
@@ -19,6 +19,10 @@ typedef struct persona Persona;
 
 void printPersona(Persona p){
 	printf("Genero: %c - Tiempo: %d\n", p.genero, p.tiempo);
+}
+void printProceso(Persona p, int pid){
+
+	printf("Genero: %c - Tiempo: %d Proceso: %d\n", p.genero, p.tiempo, pid);
 }
 
 //COLA
