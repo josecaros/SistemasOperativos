@@ -70,6 +70,21 @@ Persona desencolar(Cola *col){
 
 }
 
+Persona primerElemento(Cola *col){
+
+	Persona data;
+	int i = col -> size;
+	Persona *array = col -> array;
+
+	if(i > 0){
+		data = array[col->inic];
+		return data;
+	}
+	return;
+
+}
+
+
 void print(Cola col){
 	for(int i = 0; i < col.size; i++){
 		Persona persona = col.array[(col.inic + i)%N];

@@ -71,9 +71,7 @@ void serviciosHigenicos(Cola col, int i){
 	
 	while(!estaVacio(&col)){
 		Persona a = desencolar(&col);
-		printPersona(a);					
 	}
-	printf("Proceso %d\n",i);
 						
 	
 }
@@ -115,12 +113,11 @@ int main (){
     while(numBanios--){
         pid=fork();
         if(pid==0){
-            //
+		serviciosHigenicos(buf);
             break;
         }
     }
+	
 
-    while(numBanios1--)
-        wait();
-    BorrarSemaforos(idSem);
+
 }
