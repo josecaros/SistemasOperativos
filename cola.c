@@ -1,11 +1,22 @@
 #include<stdio.h>
 #include<stdlib.h>
-#define N 5
+#define N 10
+
+//PERSONA
+struct persona {
+	char genero;
+	int tiempo;
+};
+typedef struct persona Persona;
+
+void printPersona(Persona p){
+	printf("Genero: %c - Tiempo: %d", p.genero, p.tiempo);
+}
 struct cola {
 	int size;
 	int inic;
 	int fin;
-	int array[N];
+	Persona array[N];
 };
 typedef struct cola Cola;
 
@@ -15,9 +26,9 @@ int estaVacio(Cola *col){
 int estaLleno(Cola *col){
 	return N == col -> size;
 }
-void encolar(Cola *col, int data){
+void encolar(Cola *col, Persona data ){
 	int i = col -> size;
-	int *array = col -> array;
+	Persona *array = col -> array;
 
 	if (i < N){
 		col -> fin = (col-> fin+1)%N; 
@@ -26,12 +37,12 @@ void encolar(Cola *col, int data){
 	}
 }
 
-int desencolar(Cola *col){
+Persona desencolar(Cola *col){
 	
-	int data ;
+	Persona data ;
 	int i = col -> size;
-	int *array = col -> array;
-	
+	Persona *array = col -> array;
+
 	if( i>0 ){
 		data = array[col -> inic];
 		col -> inic = (col->inic+1) % N;
@@ -39,20 +50,20 @@ int desencolar(Cola *col){
 		
 		return data;	
 	} 
-	
-	return -1;
+
+	return;
 
 
 }
 
 void print(Cola col){
 	for(int i = 0; i < col.size; i++){
-		int a = col.array[(col.inic + i)%N];
-		printf("%d ",a);
+		Persona persona = col.array[(col.inic + i)%N];
+		printPersona(persona);
 	}
-	printf("\n%d ", estaVacio(&col));
-	printf("%d ", estaLleno(&col));
-	printf("%d \n", col.size);
+	printf("\nVacio %d ", estaVacio(&col));
+	printf("Lleno%d ", estaLleno(&col));
+	printf("Length%d \n", col.size);
 	printf("\n");
 		
 }
@@ -64,21 +75,20 @@ int main(){
 	col.inic = 0;
 	col.fin = -1;
 	
-	encolar(&col,1);	
-	encolar(&col,2);	
-	encolar(&col,3);	
-	encolar(&col,4);	
-	encolar(&col,5);	
+	Persona nuevos[10];
+	for(int i = 0;i<10;i++){
+		nuevos[i].genero = 'h';
+		nuevos[i].tiempo = i+1;
+	}
+	
+	for(int i = 0;i < 10; i++)
+		encolar(&col,nuevos[i]);	
 	
 	print(col);
 	
-	printf("a %d \n",desencolar(&col));	
-	printf("a %d \n",desencolar(&col));	
-	printf("a %d \n",desencolar(&col));	
-	printf("a %d \n",desencolar(&col));	
-	printf("a %d \n",desencolar(&col));	
-	printf("a %d \n",desencolar(&col));	
-	printf("a %d \n",desencolar(&col));	
+	Persona aux = desencolar(&col);
+	print(col);
+	printPersona(aux);
 	
 }
 
