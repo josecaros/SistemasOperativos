@@ -11,6 +11,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include "cola.h"
 union semun{
     int val;
     struct semid_ds *buf;
@@ -56,9 +57,21 @@ void DesbloquearSemaforo(int id, int i) {
     sb.sem_flg = SEM_UNDO;
     semop(id, &sb, 1);
 }
-
+enum {
+    sem1,
+    sem2,
+    sem3
+};
 
 int main (){
-    
+    int numUser=28;
+    int idShMem;
+    int idSem;
+    char* buf;
+    short vals[2];
+    int miSem;
+    int tuSem;
+    while(numUser){
 
+    }
 }
