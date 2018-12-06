@@ -11,6 +11,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+
 union semun{
     int val;
     struct semid_ds *buf;
@@ -60,5 +61,7 @@ void DesbloquearSemaforo(int id, int i) {
 
 int main (){
     
+
+
 
 }
