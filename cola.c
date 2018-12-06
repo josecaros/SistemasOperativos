@@ -10,8 +10,10 @@ struct persona {
 typedef struct persona Persona;
 
 void printPersona(Persona p){
-	printf("Genero: %c - Tiempo: %d", p.genero, p.tiempo);
+	printf("Genero: %c - Tiempo: %d\n", p.genero, p.tiempo);
 }
+
+//COLA
 struct cola {
 	int size;
 	int inic;
@@ -82,13 +84,12 @@ int main(){
 	}
 	
 	for(int i = 0;i < 10; i++)
-		encolar(&col,nuevos[i]);	
-	
+		encolar(&col,nuevos[i]);		
 	print(col);
 	
-	Persona aux = desencolar(&col);
-	print(col);
-	printPersona(aux);
-	
+	for(int i = 0;i < 10; i++){
+		Persona aux = desencolar(&col);	
+		printPersona(aux);
+	}
 }
 
