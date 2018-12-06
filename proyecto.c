@@ -65,6 +65,17 @@ enum {
     sem3
 };
 
+void serviciosHigenicos(Cola col, int i){
+	
+	
+	while(!estaVacio(&col)){
+		Persona a = desencolar(&col);
+		printPersona(a);					
+	}
+	printf("Proceso %d\n",i);
+						
+	
+}
 
 
 int main (){

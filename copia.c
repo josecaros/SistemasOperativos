@@ -77,7 +77,7 @@ void serviciosHigenicos(Cola col, int i){
 	
 	while(!estaVacio(&col)){
 		Persona a = desencolar(&col);
-		printPersona(a);					
+		printProceso(a,i);					
 	}
 	printf("Proceso %d\n",i);
 						
@@ -93,14 +93,17 @@ int main () {
 
 	key_t clave = ftok("/bin/ls",33);
 	int idMemoria = shmget(clave,100,IPC_CREAT | 0777);	
-
 	Cola* colCompartida = (Cola*)shmat(idMemoria,0,0);
+//	colCompartida = &col;
+	colCompartida -> inic = 0;
+	colCompartida -> fin = -1;
+	colCompartida -> size = 0;
 
 	Persona per[10];
 	for(int i = 0;i<10;i++){
 		per[i].genero = 'h';
 		per[i].tiempo = i+1;
-		encolar(&col, per[i]);
+		encolar(colCompartida, per[i]);
 	}
 
 	int L = 3;
@@ -109,15 +112,12 @@ int main () {
 		pid_t pid = fork();
 		//HIJO
 		if(pid == 0){
-			serviciosHigenicos(col,i+1);
+			serviciosHigenicos(*colCompartida,i+1);
 		}	
 	}
 
-
-
-
 	sleep(4);
-
+	print(*colCompartida);
 
 
 
