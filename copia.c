@@ -59,13 +59,66 @@ void DesbloquearSemaforo(int id, int i) {
     semop(id, &sb, 1);
 }
 
+void entraMujer(){
+	printf("Mujer Entrando\n");	
+}
+void saleMujer(){
+	printf("Sale Mujer \n");
+}
+void entraHombre() {
+	printf("Entra Hombre");
+}
+void saleHombre(){
+	printf("Sale Hombre");
+}
 
-
-
-int main (){
-    
-	Cola col;
+void serviciosHigenicos(Cola col, int i){
 	
+	
+	while(!estaVacio(&col)){
+		Persona a = desencolar(&col);
+		printPersona(a);					
+	}
+	printf("Proceso %d\n",i);
+						
+	
+}
+
+int main () {
+	//INICIANDO LA COLA	
+	Cola col;
+	col.inic = 0;
+	col.fin = -1;
+	col.size = 0;
+
+	key_t clave = ftok("/bin/ls",33);
+	int idMemoria = shmget(clave,100,IPC_CREAT | 0777);	
+
+	Cola* colCompartida = (Cola*)shmat(idMemoria,0,0);
+
+	Persona per[10];
+	for(int i = 0;i<10;i++){
+		per[i].genero = 'h';
+		per[i].tiempo = i+1;
+		encolar(&col, per[i]);
+	}
+
+	int L = 3;
+	for(int i = 0; i < L; i++){
+	
+		pid_t pid = fork();
+		//HIJO
+		if(pid == 0){
+			serviciosHigenicos(col,i+1);
+		}	
+	}
+
+
+
+
+	sleep(4);
+
+
 
 
 }
