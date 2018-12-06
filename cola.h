@@ -6,9 +6,9 @@
 #define LABORATORIO9Y10_COLA_H
 //tu codigo aqui
 
-#include<stdio.h>
-#include<stdlib.h>
-#define N 10
+#include <stdio.h>
+#include <stdlib.h>
+#define N 100
 
 //PERSONA
 struct persona {

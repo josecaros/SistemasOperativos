@@ -65,16 +65,35 @@ enum {
 };
 
 int main (){
-    int numUser=28;
+    int numUser;
+    int numBanios;
+    puts("Ingrese la cantidad de Usuarios");
+    scanf("%i",&numUser);
+    puts("Ingrese la cantidad de baños");
+    scanf("%i",&numBanios);
     int idShMem;
     int idSem;
     char* buf;
     short vals[2];
     int miSem;
     int tuSem;
-    while(numUser){
+    Cola col;
+    col.size=0;
+    col.inic=0;
+    col.fin=-1;
 
+
+    while(numUser--){
+        int carac=rand()%2;
+        char sexo;
+        if(carac==0)
+            sexo='M';
+        else
+            sexo='H';
+        Persona data={sexo,rand () % (10-5+1) + 5};
+        encolar(&col,data);
     }
+    print(col);
 
 
 
