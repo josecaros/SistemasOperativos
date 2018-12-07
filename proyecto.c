@@ -76,7 +76,7 @@ enum
 };
 
 struct buffer {
-	int l;
+	int L;
 	char cartel;
 	Cola cola;
 };typedef struct buffer Buffer;
@@ -85,10 +85,20 @@ struct buffer {
 void serviciosHigenicos(Buffer *buf, int idSem)
 {
 	Persona per;
+
 	while (!estaVacio( &(buf->cola)) )
 	{
-		Persona a = desencolar( &(buf->cola) );
-		sleep(a.tiempo);
+		Persona a = primerElemento( &(buf->cola) );
+		if(buf->cartel == 'V'){ //Cartel Vacio
+			buf->cartel = a.sexo;
+		}
+		if(buf->cartel == a.sexo){
+			desencolar( &(buf->cola));
+			sleep(a.tiempo);
+		}
+		else {
+			//Wait
+		}
 
 	}
 
@@ -118,9 +128,12 @@ int main()
 
 	idShMem = ReservarMemoriaComp(sizeof(struct buffer));
 	buf = (Buffer *)MapearMemoriaComp(idShMem);
+	//Inicalizando la Variable 
 	buf->cola.inic = 0;
 	buf->cola.size = 0;
 	buf->cola.fin = -1;
+	buf->cartel = 'V';
+	buf->L = 0;
 
 	// Inicializo la Cola (buf) con las persona a ocupar el Banios
 	while (numUser--)
