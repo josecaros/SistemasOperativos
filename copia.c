@@ -72,29 +72,28 @@ void saleHombre(){
 	printf("Sale Hombre");
 }
 
-void serviciosHigenicos(Cola col, int i){
+void serviciosHigenicos(Cola *col, int i){
 	
 	
-	while(!estaVacio(&col)){
-		Persona a = desencolar(&col);
-		printProceso(a,i);					
-	}
-	printf("Proceso %d\n",i);
+	//while(!estaVacio(&col)){
+		Persona a = desencolar(col);
+		//printProceso(a,i);
+	//}
+	//printf("Proceso %d\n",i);
 						
 	
 }
 
 int main () {
-	//INICIANDO LA COLA	
-	Cola col;
-	col.inic = 0;
-	col.fin = -1;
-	col.size = 0;
-
+	//INICIANDO LA COLA
+	Cola* colCompartida;
 	key_t clave = ftok("/bin/ls",33);
-	int idMemoria = shmget(clave,100,IPC_CREAT | 0777);	
-	Cola* colCompartida = (Cola*)shmat(idMemoria,0,0);
-//	colCompartida = &col;
+	int idMemoria = shmget(clave, sizeof(struct cola),IPC_CREAT | 0777);
+
+	colCompartida = (Cola*)shmat(idMemoria,NULL,0);
+
+	//(Cola*) colCompartida;
+
 	colCompartida -> inic = 0;
 	colCompartida -> fin = -1;
 	colCompartida -> size = 0;
@@ -106,18 +105,21 @@ int main () {
 		encolar(colCompartida, per[i]);
 	}
 
+	pid_t pid;
 	int L = 3;
 	for(int i = 0; i < L; i++){
 	
-		pid_t pid = fork();
+		pid = fork();
 		//HIJO
 		if(pid == 0){
-			serviciosHigenicos(*colCompartida,i+1);
+			desencolar(colCompartida);
+			break;
 		}	
 	}
 
 	sleep(4);
-	print(*colCompartida);
+	if(pid!=0)
+		print(*colCompartida);
 
 
 

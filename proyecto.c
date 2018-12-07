@@ -60,23 +60,26 @@ void DesbloquearSemaforo(int id, int i) {
     sb.sem_flg = SEM_UNDO;
     semop(id, &sb, 1);
 }
+
+void entraMujer(){
+    printf("Mujer Entrando\n");
+}
+void saleMujer(){
+    printf("Sale Mujer \n");
+}
+void entraHombre() {
+    printf("Entra Hombre");
+}
+void saleHombre(){
+    printf("Sale Hombre");
+}
+
 enum {
     sem1,
     sem2,
     sem3
 };
 
-void serviciosHigenicos(Cola col, int i){
-	
-	
-	while(!estaVacio(&col)){
-		Persona a = desencolar(&col);
-		printPersona(a);					
-	}
-	printf("Proceso %d\n",i);
-						
-	
-}
 
 
 int main (){
