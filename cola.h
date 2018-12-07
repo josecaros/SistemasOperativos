@@ -12,17 +12,17 @@
 
 //PERSONA
 struct persona {
-	char genero;
+	char sexo;
 	int tiempo;
 };
 typedef struct persona Persona;
 
 void printPersona(Persona p){
-	printf("Genero: %c - Tiempo: %d\n", p.genero, p.tiempo);
+	printf("Genero: %c - Tiempo: %d\n", p.sexo, p.tiempo);
 }
 void printProceso(Persona p, int pid){
 
-	printf("Genero: %c - Tiempo: %d Proceso: %d\n", p.genero, p.tiempo, pid);
+	printf("Genero: %c - Tiempo: %d Proceso: %d\n", p.sexo, p.tiempo, pid);
 }
 
 //COLA
@@ -85,15 +85,12 @@ Persona primerElemento(Cola *col){
 }
 
 
-void print(Cola col){
+void printCola(Cola col){
 	for(int i = 0; i < col.size; i++){
 		Persona persona = col.array[(col.inic + i)%N];
 		printPersona(persona);
 	}
-	printf("\nVacio %d ", estaVacio(&col));
-	printf("Lleno%d ", estaLleno(&col));
-	printf("Length%d \n", col.size);
-	printf("\n");
+	printf("\nCola Size: %d\n", col.size);
 		
 }
 

@@ -1,4 +1,4 @@
-//G
+//
 // Created by jcaros on 06/12/18.
 //
 #include "cola.h"
@@ -76,9 +76,12 @@ enum
 
 void serviciosHigenicos(Cola *col)
 {
-
-	Persona a = desencolar(col);
-	sleep(4);
+	Persona per;
+	while(!estaVacio(col)){
+		Persona a = desencolar(col);
+		
+	}
+	
 
 	exit(0); // Fin de Proceso Hijo
 }
@@ -133,13 +136,13 @@ int main()
 		}
 	}
 
-	// Espera a que terminen los procesos de su hijo
+	// Espera a que terminen los procesos Pesado Creados
 	for (int i = 0; i < numBanios; i++)
 	{
 		waitpid(pids[i], &status[i], 0);
 	}
 
-	print(*buf);
+	printCola(*buf);
 	printf("FIN \n");
 
 	BorrarSemaforos(idSem);
