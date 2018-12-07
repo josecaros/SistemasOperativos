@@ -77,24 +77,16 @@ enum
 void serviciosHigenicos(Cola *col, int idSem)
 {
 	Persona per;
-	BloquearSemaforo(idSem, 0);
-	while (!estaVacio(col))
-	{
+	BloquearSemaforo(idSem,0);
+	while(!estaVacio(col)){
 		Persona a = desencolar(col);
-		DesbloquearSemaforo(idSem, 0);
-		sleep(a.tiempo);
+		DesbloquearSemaforo(idSem,0);
+		sleep(a.tiempo);	
 	}
+	
 
 	exit(0); // Fin de Proceso Hijo
 }
-
-struct buffer
-{
-	int L;
-	int cartel;
-	Cola cola;
-};
-typedef struct buffer Buffer;
 
 int main()
 {
@@ -106,7 +98,7 @@ int main()
 	puts("Ingrese la cantidad de baños");
 	scanf("%i", &numBanios);
 	int idShMem;
-	Buffer *buf;
+	Cola *buf;
 
 	pid_t pid;
 
@@ -115,12 +107,11 @@ int main()
 
 	idSem = CrearSemaforos(3, vals);
 
-	idShMem = ReservarMemoriaComp(sizeof(struct buffer));
-	buf = (Buffer *)MapearMemoriaComp(idShMem);
-
-	buf-> cola.inic = 0;
-	buf-> cola.fin = -1;
-	buf-> cola.size = 0;
+	idShMem = ReservarMemoriaComp(sizeof(struct cola));
+	buf = (Cola *)MapearMemoriaComp(idShMem);
+	buf->inic = 0;
+	buf->size = 0;
+	buf->fin = -1;
 
 	// Inicializo la Cola (buf) con las persona a ocupar el Banios
 	while (numUser--)
@@ -132,7 +123,7 @@ int main()
 		else
 			sexo = 'H';
 		Persona data = {sexo, rand() % (4 - 1 + 1) + 1};
-		encolar(&(buf->cola), data);
+		encolar(buf, data);
 	}
 	// Inicializo los procesos Pesados
 	pid_t pids[numBanios];
@@ -143,7 +134,7 @@ int main()
 		pids[i] = fork();
 		if (pids[i] == 0)
 		{
-			serviciosHigenicos(&(buf->cola), idSem);
+			serviciosHigenicos(buf,idSem);
 		}
 	}
 
@@ -153,7 +144,7 @@ int main()
 		waitpid(pids[i], &status[i], 0);
 	}
 
-	printCola(buf->cola);
+	printCola(*buf);
 	printf("FIN \n");
 
 	BorrarSemaforos(idSem);
