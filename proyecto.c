@@ -75,54 +75,56 @@ enum
 	sem3
 };
 
-struct buffer {
+struct buffer
+{
 	int L;
 	char cartel;
 	Cola cola;
-};typedef struct buffer Buffer;
-
+};
+typedef struct buffer Buffer;
 
 void serviciosHigenicos(Buffer *buf, int idSem)
 {
 	Persona per;
-
-	BloquearSemaforo(idSem,0); // P(s1)
-	while (!estaVacio( &(buf->cola)) )
+	while (1)
 	{
-		Persona a = primerElemento( &(buf->cola) );
-		if(buf->cartel == 'V'){ //Cartel Vacio
-			buf->cartel = a.sexo;
-		}
-
-		if(buf->cartel == a.sexo){
-			desencolar( &(buf->cola));
-			buf->L++;
-			DesbloquearSemaforo(idSem,0); // V(s1)
-			sleep(a.tiempo);
-			// P(s1)
-			BloquearSemaforo(idSem,0); 
-			buf->L--;
-			if(buf -> L == 0){
-				buf->cartel = 'V';
+		BloquearSemaforo(idSem, 0); // P(s1)
+		if (!estaVacio(&(buf->cola)))
+		{
+			Persona a = primerElemento(&(buf->cola));
+			if (buf->cartel == 'V')
+			{ //Cartel Vacio
+				buf->cartel = a.sexo;
 			}
-			DesbloquearSemaforo(idSem,0);
-			// V(s1);
+
+			if (buf->cartel == a.sexo)
+			{
+				desencolar(&(buf->cola));
+				buf->L++;
+				DesbloquearSemaforo(idSem, 0); // V(s1)
+				sleep(a.tiempo);
+				// P(s1)
+				BloquearSemaforo(idSem, 0);
+				buf->L--;
+				if (buf->L == 0)
+				{
+					buf->cartel = 'V';
+				}
+				DesbloquearSemaforo(idSem, 0);
+				// V(s1);
+			}
+			else
+			{
+				char estado = buf->cartel; //Estado por el que me quede, yo soy el OPUESTO
+				DesbloquearSemaforo(idSem, 0);
+
+				while (estado == buf->cartel); // Si estado == vacio o == MI estado SAFO del While
+			}
 		}
-
-		else {
-			char estado = buf->cartel; //Estado por el que me quede, yo soy el OPUESTO
-			DesbloquearSemaforo(idSem,0);
-			
-
-			while(estado == buf->cartel); // Si estado == vacio o == MI estado SAFO del While
-		}
-
 	}
 
 	exit(0); // Fin de Proceso Hijo
 }
-
-
 
 int main()
 {
@@ -145,7 +147,7 @@ int main()
 
 	idShMem = ReservarMemoriaComp(sizeof(struct buffer));
 	buf = (Buffer *)MapearMemoriaComp(idShMem);
-	//Inicalizando la Variable 
+	//Inicalizando la Variable
 	buf->cola.inic = 0;
 	buf->cola.size = 0;
 	buf->cola.fin = -1;
@@ -162,7 +164,7 @@ int main()
 		else
 			sexo = 'H';
 		Persona data = {sexo, rand() % (4 - 1 + 1) + 1};
-		encolar( &(buf->cola) , data);
+		encolar(&(buf->cola), data);
 	}
 	// Inicializo los procesos Pesados
 	pid_t pids[numBanios];
