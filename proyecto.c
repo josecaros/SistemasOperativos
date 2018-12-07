@@ -94,20 +94,24 @@ void serviciosHigenicos(Buffer *buf, int idSem)
 			Persona a = primerElemento(&(buf->cola));
 			if (buf->cartel == 'V')
 			{ //Cartel Vacio
+				printf("Cartel Cambiando a %c \n",a.sexo);
 				buf->cartel = a.sexo;
 			}
 
 			if (buf->cartel == a.sexo)
 			{
+				printf("Entrando %c \n", a.sexo);
 				desencolar(&(buf->cola));
 				buf->L++;
 				DesbloquearSemaforo(idSem, 0); // V(s1)
 				sleep(a.tiempo);
 				// P(s1)
 				BloquearSemaforo(idSem, 0);
+				printf("Saliendo %c \n",a.sexo);
 				buf->L--;
 				if (buf->L == 0)
 				{
+
 					buf->cartel = 'V';
 				}
 				DesbloquearSemaforo(idSem, 0);
@@ -118,10 +122,12 @@ void serviciosHigenicos(Buffer *buf, int idSem)
 				char estado = buf->cartel; //Estado por el que me quede, yo soy el OPUESTO
 				DesbloquearSemaforo(idSem, 0);
 
-				while (estado == buf->cartel); // Si estado == vacio o == MI estado SAFO del While
+				while (estado == buf->cartel); // Si estado == vacio o == MI ESTADO SAFO del While
 			}
-		}else {
-			DesbloquearSemaforo(idSem,0);
+		}
+		else
+		{ //Cola Vacia SAFO Desbloqueo y me voy
+			DesbloquearSemaforo(idSem, 0);
 			break;
 		}
 	}
