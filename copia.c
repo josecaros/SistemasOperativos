@@ -117,6 +117,7 @@ int main()
 
 	idShMem = ReservarMemoriaComp(sizeof(struct buffer));
 	buf = (Buffer *)MapearMemoriaComp(idShMem);
+
 	buf-> cola.inic = 0;
 	buf-> cola.fin = -1;
 	buf-> cola.size = 0;
@@ -152,7 +153,7 @@ int main()
 		waitpid(pids[i], &status[i], 0);
 	}
 
-	printCola((buf->cola));
+	printCola(buf->cola);
 	printf("FIN \n");
 
 	BorrarSemaforos(idSem);
