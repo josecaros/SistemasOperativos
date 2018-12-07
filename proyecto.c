@@ -1,4 +1,4 @@
-//
+//G
 // Created by jcaros on 06/12/18.
 //
 #include "cola.h"
@@ -15,7 +15,7 @@
 #include "cola.h"
 #include <sys/wait.h>
 
-union semun{
+union semun {
 	int val;
 	struct semid_ds *buf;
 	unsigned short int *array;
@@ -23,108 +23,124 @@ union semun{
 };
 
 //declaraciones de las funciones wrappers para simplificarnos la vida
-int ReservarMemoriaComp(int n) {
+int ReservarMemoriaComp(int n)
+{
 	return shmget(IPC_PRIVATE, n, IPC_CREAT | SHM_R | SHM_W);
 }
-void* MapearMemoriaComp(int id) {
-	void* addr;
-	addr = shmat(id, NULL, 0); //adjuntamos el segmento
+void *MapearMemoriaComp(int id)
+{
+	void *addr;
+	addr = shmat(id, NULL, 0);  //adjuntamos el segmento
 	shmctl(id, IPC_RMID, NULL); //y lo marcamos para que se destruya
 	return addr;
 }
-int CrearSemaforos(int n, short* vals) {
+int CrearSemaforos(int n, short *vals)
+{
 	union semun arg;
 	int id;
-	id=semget(IPC_PRIVATE, n, SHM_R | SHM_W);
-	arg.array=vals;
+	id = semget(IPC_PRIVATE, n, SHM_R | SHM_W);
+	arg.array = vals;
 	semctl(id, 0, SETALL, arg);
 	return id;
 }
-void BorrarSemaforos(int id) {
-	if(semctl(id, 0, IPC_RMID, NULL)==-1) {
+void BorrarSemaforos(int id)
+{
+	if (semctl(id, 0, IPC_RMID, NULL) == -1)
+	{
 		perror("Error liberando semáforo!");
 		exit(EXIT_FAILURE);
 	}
 }
-void BloquearSemaforo(int id, int i) {
+void BloquearSemaforo(int id, int i)
+{
 	struct sembuf sb;
 	sb.sem_num = i;
-	sb.sem_op=-1;
-	sb.sem_flg=SEM_UNDO;
-	semop(id,&sb,1);
+	sb.sem_op = -1;
+	sb.sem_flg = SEM_UNDO;
+	semop(id, &sb, 1);
 }
-void DesbloquearSemaforo(int id, int i) {
+void DesbloquearSemaforo(int id, int i)
+{
 	struct sembuf sb;
 	sb.sem_num = i;
 	sb.sem_op = 1;
 	sb.sem_flg = SEM_UNDO;
 	semop(id, &sb, 1);
 }
-enum {
+enum
+{
 	sem1,
 	sem2,
 	sem3
 };
 
-void serviciosHigenicos(Cola col, int i){
+void serviciosHigenicos(Cola *col)
+{
 
+	Persona a = desencolar(col);
+	sleep(4);
 
-	while(1){
-		Persona a = desencolar(&col);
-	
-	
-	}
-
-
+	exit(0); // Fin de Proceso Hijo
 }
 
-
-int main (){
+int main()
+{
 	int numUser;
 	int numBanios;
-	int numBanios1=numBanios;
+	int numBanios1 = numBanios;
 	puts("Ingrese la cantidad de Usuarios");
-	scanf("%i",&numUser);
+	scanf("%i", &numUser);
 	puts("Ingrese la cantidad de baños");
-	scanf("%i",&numBanios);
+	scanf("%i", &numBanios);
 	int idShMem;
-	Cola* buf;
+	Cola *buf;
 
 	pid_t pid;
 
 	int idSem;
 	short vals[3];
 
-	idSem=CrearSemaforos(3,vals);
+	idSem = CrearSemaforos(3, vals);
 
-	idShMem= ReservarMemoriaComp(sizeof(struct cola));
-	buf=(Cola*) MapearMemoriaComp(idShMem);
-	buf->inic=0;
-	buf->size=0;
-	buf->fin=-1;
+	idShMem = ReservarMemoriaComp(sizeof(struct cola));
+	buf = (Cola *)MapearMemoriaComp(idShMem);
+	buf->inic = 0;
+	buf->size = 0;
+	buf->fin = -1;
 
-	while(numUser--){
-		int carac=rand()%2;
+	// Inicializo la Cola (buf) con las persona a ocupar el Banios
+	while (numUser--)
+	{
+		int carac = rand() % 2;
 		char sexo;
-		if(carac==0)
-			sexo='M';
+		if (carac == 0)
+			sexo = 'M';
 		else
-			sexo='H';
-		Persona data={sexo,rand () % (10-5+1) + 5};
-		encolar(buf,data);
+			sexo = 'H';
+		Persona data = {sexo, rand() % (10 - 5 + 1) + 5};
+		encolar(buf, data);
 	}
-	
-	while(numBanios--){
-		pid=fork();
-		if(pid==0){
-			//
-			break;
+	// Inicializo los procesos Pesados
+	pid_t pids[numBanios];
+	int status[numBanios]; // Almacena el estado de como Termino el Proceso
+
+	for (int i = 0; i < numBanios; i++)
+	{
+		pids[i] = fork();
+		if (pids[i] == 0)
+		{
+			serviciosHigenicos(buf);
 		}
 	}
 
-	while(numBanios1--){
-
-
+	// Espera a que terminen los procesos de su hijo
+	for (int i = 0; i < numBanios; i++)
+	{
+		waitpid(pids[i], &status[i], 0);
 	}
+
+	print(*buf);
+	printf("FIN \n");
+
 	BorrarSemaforos(idSem);
 }
