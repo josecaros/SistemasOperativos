@@ -120,6 +120,9 @@ void serviciosHigenicos(Buffer *buf, int idSem)
 
 				while (estado == buf->cartel); // Si estado == vacio o == MI estado SAFO del While
 			}
+		}else {
+			DesbloquearSemaforo(idSem,0);
+			break;
 		}
 	}
 
