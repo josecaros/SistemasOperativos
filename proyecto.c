@@ -74,12 +74,14 @@ enum
 	sem3
 };
 
-void serviciosHigenicos(Cola *col)
+void serviciosHigenicos(Cola *col, int idSem)
 {
 	Persona per;
+	BloquearSemaforo(idSem,0);
 	while(!estaVacio(col)){
 		Persona a = desencolar(col);
-		
+		DesbloquearSemaforo(idSem,0);
+		sleep(a.tiempo);	
 	}
 	
 
@@ -120,7 +122,7 @@ int main()
 			sexo = 'M';
 		else
 			sexo = 'H';
-		Persona data = {sexo, rand() % (10 - 5 + 1) + 5};
+		Persona data = {sexo, rand() % (4 - 1 + 1) + 1};
 		encolar(buf, data);
 	}
 	// Inicializo los procesos Pesados
@@ -132,7 +134,7 @@ int main()
 		pids[i] = fork();
 		if (pids[i] == 0)
 		{
-			serviciosHigenicos(buf);
+			serviciosHigenicos(buf,idSem);
 		}
 	}
 
