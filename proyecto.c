@@ -68,13 +68,6 @@ void DesbloquearSemaforo(int id, int i)
 	semop(id, &sb, 1);
 }
 
-enum
-{
-	sem1,
-	sem2,
-	sem3
-};
-
 struct buffer
 {
 	int L;
@@ -150,7 +143,7 @@ int main()
 	pid_t pid;
 
 	int idSem;
-	short vals[3];
+	short vals[1];
 
 	idSem = CrearSemaforos(3, vals);
 
